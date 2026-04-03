@@ -2,7 +2,7 @@ Name: MetalQuintessence
 Version: 1.0.0
 Title: Metal Quintessence
 Desc: Introduce chromium, A metallic version of quintessence
-DLL: "MetalQuintessence/bin/Debug/net452/MetalQuintessence.dll"
+DLL: "MetalQuintessence/MetalQuintessence.dll"
 Dependencies:
 - Name: Quintessential
   Version: 0.2.0

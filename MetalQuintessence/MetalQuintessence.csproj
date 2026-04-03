@@ -14,6 +14,14 @@
 		<AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<Reference Include="Brimstone">
 		  <HintPath>..\..\Brimstone_2.0.2\Brimstone.dll</HintPath>
