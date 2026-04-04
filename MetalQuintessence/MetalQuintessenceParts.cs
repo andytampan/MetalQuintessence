@@ -1,4 +1,5 @@
 ﻿using Quintessential;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PartType = class_139;
@@ -10,6 +11,7 @@ namespace MetalQuintessence;
 
 public class MetalQuintessenceParts
 {
+    // note to self when dealing with offset, but 1 hexagon = 82 (just treat this like a rough value i don't know wtf going on)
     public static Texture ringhole = class_238.field_1989.field_90.field_255.field_293;
 
     public static Texture chromiumIcon = Brimstone.API.GetTexture("textures/parts/andytampan/pigmentation/chromiumIcon");
@@ -17,6 +19,8 @@ public class MetalQuintessenceParts
     public static Texture bowl = class_238.field_1989.field_90.field_170;
     public static Texture ringedBowl = class_238.field_1989.field_90.field_163;
     public static Texture hole = class_238.field_1989.field_90.field_255.field_293;
+
+    public static Texture leadIcon = Brimstone.API.GetTexture("textures/parts/andytampan/chromaticDispersionBase/lead_symbol");
 
     public static Texture pigmentationBase = Brimstone.API.GetTexture("textures/parts/andytampan/pigmentation/pigmentationBase");
     public static Texture pigmentationGlow = class_238.field_1989.field_97.field_374;
@@ -34,8 +38,10 @@ public class MetalQuintessenceParts
     public static Texture blossomIconHover = Brimstone.API.GetTexture("textures/parts/andytampan/icons/pigmentation_hover");
 
     public static Texture chromaticDispersionBase = Brimstone.API.GetTexture("textures/parts/andytampan/chromaticDispersionBase/pigmentationBase");
+    public static Texture chromaticDispersionGlyphBase = Brimstone.API.GetTexture("textures/parts/andytampan/chromaticDispersionBase/glyphBase");
 
     public static Texture pigmentationBond = class_238.field_1989.field_90.field_173;
+    public static Texture chromaticDispersionBond = Brimstone.API.GetTexture("textures/parts/andytampan/chromaticDispersionBase/chromaDispersionBondLoop");
     public static Texture[] projectAtomAnimation => class_238.field_1989.field_81.field_614;
     public static Texture[] irisAnimation = class_238.field_1989.field_90.field_246;
     public static Vector2 HexGraphicalOffset(HexIndex hex) => class_187.field_1742.method_492(hex);
@@ -63,6 +69,10 @@ public class MetalQuintessenceParts
     public static readonly HexIndex chromeDispersionCopper = new(3, -3);
     public static readonly HexIndex chromeDispersionSilver = new(2, -3);
     public static readonly HexIndex chromeDispersionGold = new(1, -2);
+    public static readonly HexIndex chromeDispersionQuicksilver = new(0, -1);
+    public static readonly HexIndex chromeDispersionGlyphA = new(1, -1);
+    public static readonly HexIndex chromeDispersionGlyphB = new(2, -2);
+
 
 
 
@@ -91,7 +101,9 @@ public class MetalQuintessenceParts
                 chromeDispersionIron,
                 chromeDispersionCopper,
                 chromeDispersionSilver,
-                chromeDispersionGold
+                chromeDispersionGold,
+                chromeDispersionGlyphA,
+                chromeDispersionGlyphB
 
             },
             field_1551 = Permissions.None,
@@ -153,32 +165,39 @@ public class MetalQuintessenceParts
         QApi.AddPartTypeToPanel(Blossom, false);
         QApi.AddPartType(ChromeDispersion, static (part, pos, editor, renderer) =>
         {
-            Vector2 offset = new(50f, 296f);
+            Vector2 offset = new(90f, 296f);
+
+
+            renderer.method_529(chromaticDispersionGlyphBase, chromeDispersionGlyphA, Vector2.Zero);
+            renderer.method_529(chromaticDispersionGlyphBase, chromeDispersionGlyphB, Vector2.Zero);
             renderer.method_523(chromaticDispersionBase, Vector2.Zero, offset, 0f);
             renderer.method_528(hole, chromeDispersionInput, Vector2.Zero);
+
             int irisFrame = 15;
             bool afterIrisOpens = false;
             PartSimState pss = editor.method_507().method_481(part);
             class_236 uco = editor.method_1989(part, pos);
             float time = editor.method_504();
-            AtomType[] cardinalAtoms = new AtomType[6]
+            AtomType[] cardinalAtoms = new AtomType[7]
             {
                 Brimstone.API.VanillaAtoms.lead,
                 Brimstone.API.VanillaAtoms.tin,
                 Brimstone.API.VanillaAtoms.iron,
                 Brimstone.API.VanillaAtoms.copper,
                 Brimstone.API.VanillaAtoms.silver,
-                Brimstone.API.VanillaAtoms.gold
+                Brimstone.API.VanillaAtoms.gold,
+                Brimstone.API.VanillaAtoms.quicksilver
             };
 
-            HexIndex[] outputHexes = new HexIndex[6]
+            HexIndex[] outputHexes = new HexIndex[7]
             {
                 chromeDispersionLead,
                 chromeDispersionTin,
                 chromeDispersionIron,
                 chromeDispersionCopper,
                 chromeDispersionSilver,
-                chromeDispersionGold
+                chromeDispersionGold,
+                chromeDispersionQuicksilver
             };
 
 
@@ -189,7 +208,7 @@ public class MetalQuintessenceParts
                 afterIrisOpens = time > 0.5f;
             }
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 7; i++)
             {
                 HexIndex h = outputHexes[i];
                 Vector2 risingOffset = uco.field_1984 + class_187.field_1742.method_492(h).Rotated(uco.field_1985);
@@ -208,6 +227,17 @@ public class MetalQuintessenceParts
                     Editor.method_925(risingAtom, risingOffset, new HexIndex(0, 0), 0f, 1f, time, 1f, false, null);
                 }
             }
+            // 90f, 296f ????????????????? I end up just eyeballing this
+            renderer.method_523(chromaticDispersionBond, Vector2.Zero, offset, 0f);
+            Vector2 offsetRotate0 = new(48f, 366f); // -48 and +70
+            renderer.method_523(chromaticDispersionBond, Vector2.Zero, offsetRotate0, 0f);
+            Vector2 offsetRotate1 = new(172f, 296f); // +82 and 0
+            renderer.method_523(chromaticDispersionBond, Vector2.Zero, offsetRotate1, Convert.ToSingle(Math.PI / 3));
+            Vector2 offsetRotate2 = new(214f, 366); // -42 and +70
+            renderer.method_523(chromaticDispersionBond, Vector2.Zero, offsetRotate2, Convert.ToSingle(Math.PI / 3));
+            Vector2 offsetRotate3 = new(294f, 225);
+            renderer.method_523(chromaticDispersionBond, Vector2.Zero, offsetRotate3, Convert.ToSingle(Math.PI / 3 * 2));
+            renderer.method_529(chromiumIcon, chromeDispersionInput, Vector2.Zero);
         });
         QApi.AddPartType(Pigmentation, static (part, pos, editor, renderer) =>
         {
@@ -221,12 +251,12 @@ public class MetalQuintessenceParts
             renderer.method_529(ringhole, pigmentationE, Vector2.Zero);
             renderer.method_529(ringhole, pigmentationF, Vector2.Zero);
 
-            renderer.method_529(chromiumIcon, pigmentationA, Vector2.Zero);
-            renderer.method_529(chromiumIcon, pigmentationB, Vector2.Zero);
-            renderer.method_529(chromiumIcon, pigmentationC, Vector2.Zero);
-            renderer.method_529(chromiumIcon, pigmentationD, Vector2.Zero);
-            renderer.method_529(chromiumIcon, pigmentationE, Vector2.Zero);
-            renderer.method_529(chromiumIcon, pigmentationF, Vector2.Zero);
+            renderer.method_529(leadIcon, pigmentationA, Vector2.Zero);
+            renderer.method_529(leadIcon, pigmentationB, Vector2.Zero);
+            renderer.method_529(leadIcon, pigmentationC, Vector2.Zero);
+            renderer.method_529(leadIcon, pigmentationD, Vector2.Zero);
+            renderer.method_529(leadIcon, pigmentationE, Vector2.Zero);
+            renderer.method_529(leadIcon, pigmentationF, Vector2.Zero);
 
             renderer.method_529(bowl, pigmentationBowl, Vector2.Zero);
             renderer.method_529(quicksilverIcon, pigmentationBowl, Vector2.Zero);
@@ -257,14 +287,15 @@ public class MetalQuintessenceParts
                 PartType type = part.method_1159();
                 if (type == ChromeDispersion)
                 { 
-                    HexIndex[] outputHexes = new HexIndex[6]
+                    HexIndex[] outputHexes = new HexIndex[7]
                     {
                    chromeDispersionLead,
                    chromeDispersionTin,
                    chromeDispersionIron,
                    chromeDispersionCopper,
                    chromeDispersionSilver,
-                   chromeDispersionGold
+                   chromeDispersionGold,
+                   chromeDispersionQuicksilver
                     };
 
                 if (first && !pss[part].field_2743)
@@ -294,17 +325,18 @@ public class MetalQuintessenceParts
                 }
                 else if (pss[part].field_2743)
                 {
-                    AtomType[] cardinalAtoms = new AtomType[6]
+                    AtomType[] cardinalAtoms = new AtomType[7]
                     {
                         Brimstone.API.VanillaAtoms.lead,
                         Brimstone.API.VanillaAtoms.tin,
                         Brimstone.API.VanillaAtoms.iron,
                         Brimstone.API.VanillaAtoms.copper,
                         Brimstone.API.VanillaAtoms.silver,
-                        Brimstone.API.VanillaAtoms.gold
+                        Brimstone.API.VanillaAtoms.gold,
+                        Brimstone.API.VanillaAtoms.quicksilver
                     };
 
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 7; i++)
                     {
                         // Spawn new atom
                         Brimstone.API.AddAtom(sim, part, outputHexes[i], cardinalAtoms[i]);
