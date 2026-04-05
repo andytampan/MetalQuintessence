@@ -497,12 +497,10 @@ public class MetalQuintessenceParts
                             SEB.field_3936.Add(new class_228(SEB, (enum_7)1, animationPosition, disposalFlashAnimation, 30f, Vector2.Zero, 0f));
 
                             Brimstone.API.JoinMoleculesAtHexes(sim, part, blossomBowl, blossomA);
-                            Brimstone.API.AddBond(sim, part, blossomBowl, blossomA, enum_126.Standard, true, false);
-                            Brimstone.API.AddBond(sim, part, blossomBowl, blossomB, enum_126.Standard, true, false);
-                            Brimstone.API.AddBond(sim, part, blossomBowl, blossomC, enum_126.Standard, true, false);
-                            Brimstone.API.AddBond(sim, part, blossomBowl, blossomD, enum_126.Standard, true, false);
-                            Brimstone.API.AddBond(sim, part, blossomBowl, blossomE, enum_126.Standard, true, false);
-                            Brimstone.API.AddBond(sim, part, blossomBowl, blossomF, enum_126.Standard, true, false);
+                            foreach (HexIndex output in outputHexes)
+                            {
+                            Brimstone.API.AddBond(sim, part, blossomBowl, output, enum_126.Standard, true, false);
+                            }
                         }
                     }
                 }
