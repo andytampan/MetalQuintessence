@@ -458,7 +458,7 @@ public class MetalQuintessenceParts
                             Brimstone.API.VanillaAtoms.salt,
                             Brimstone.API.VanillaAtoms.earth,
                             Brimstone.API.VanillaAtoms.fire,
-                            Brimstone.API.VanillaAtoms.fire,
+                            Brimstone.API.VanillaAtoms.salt,
                             Brimstone.API.VanillaAtoms.air
                         };
 
