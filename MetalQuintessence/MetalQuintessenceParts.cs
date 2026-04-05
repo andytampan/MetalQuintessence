@@ -360,7 +360,9 @@ public class MetalQuintessenceParts
                 }
 
                 if (type == Pigmentation)
+                {
 
+                
                     if (sim.FindAtomRelative(part, pigmentationBowl).method_99(out AtomReference silver) &&
                         sim.FindAtomRelative(part, pigmentationA).method_99(out AtomReference A) &&
                         sim.FindAtomRelative(part, pigmentationB).method_99(out AtomReference B) &&
@@ -371,28 +373,18 @@ public class MetalQuintessenceParts
                     )
                     {
 
-                        pss[part].field_2744 = new AtomType[1] { silver.field_2280 };
-                        AtomType quicksilver = pss[part].field_2744[0];
-                        pss[part].field_2744 = new AtomType[1] { A.field_2280 };
-                        AtomType a = pss[part].field_2744[0];
-                        pss[part].field_2744 = new AtomType[1] { B.field_2280 };
-                        AtomType b = pss[part].field_2744[0];
-                        pss[part].field_2744 = new AtomType[1] { C.field_2280 };
-                        AtomType c = pss[part].field_2744[0];
-                        pss[part].field_2744 = new AtomType[1] { D.field_2280 };
-                        AtomType d = pss[part].field_2744[0];
-                        pss[part].field_2744 = new AtomType[1] { E.field_2280 };
-                        AtomType e = pss[part].field_2744[0];
-                        pss[part].field_2744 = new AtomType[1] { F.field_2280 };
-                        AtomType f = pss[part].field_2744[0];
-                        AtomType[] input = new AtomType[]
-                        {
-                              a, b, c, d, e, f
-                        };
                         AtomReference[] inputs = new AtomReference[]
                         {
                             A, B, C, D, E, F
                         };
+                        List<AtomType> input = new List<AtomType>();
+
+                        AtomType quicksilver = silver.field_2280;
+                        foreach (AtomReference atomReference in inputs)
+                        {
+                            input.Add(atomReference.field_2280);
+                        }
+
                         AtomType[] metals = new AtomType[]
                         {
                             Brimstone.API.VanillaAtoms.lead,
@@ -419,6 +411,7 @@ public class MetalQuintessenceParts
 
                         }
                     }
+                }
                 if (type == Blossom)
 
                 {
