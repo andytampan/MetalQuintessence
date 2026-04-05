@@ -385,7 +385,7 @@ public class MetalQuintessenceParts
                             input.Add(atomReference.field_2280);
                         }
 
-                        AtomType[] metals = new AtomType[]
+                        AtomType[] metals = new AtomType[] 
                         {
                             Brimstone.API.VanillaAtoms.lead,
                             Brimstone.API.VanillaAtoms.tin,
@@ -399,14 +399,14 @@ public class MetalQuintessenceParts
                             requirement = (input.Contains(atomtype)) && requirement;
                         foreach (AtomReference atomReference in inputs) //iterate if each atom are singular and dropped
                             requirement = !atomReference.field_2281 && !atomReference.field_2282 && requirement;
-                        if ( quicksilver == Brimstone.API.VanillaAtoms.quicksilver && requirement)
+                        if ( quicksilver == Brimstone.API.VanillaAtoms.quicksilver && requirement) // if requirement is still true, and if the input are quicksilver
                         {   
-                            foreach (AtomReference atom in inputs)
+                            foreach (AtomReference atom in inputs) //remove each atom one by one
                             {
                                 Brimstone.API.RemoveAtom(atom);
                                 Brimstone.API.DrawFallingAtom(seb, atom);
                             }
-                            Brimstone.API.ChangeAtom(silver, MetalQuintessenceAtoms.Chromium);
+                            Brimstone.API.ChangeAtom(silver, MetalQuintessenceAtoms.Chromium); //transume quicksilver into chromium with it's effect
                             silver.field_2279.field_2276 = (Maybe<class_168>)new class_168(seb, (enum_7)0, (enum_132)1, silver.field_2280, projectAtomAnimation, 30f);
 
                         }
@@ -457,19 +457,19 @@ public class MetalQuintessenceParts
 
                         if (inputs == MetalQuintessenceAtoms.Chromium)
                         {
-                            Molecule wheel = new Molecule();
-                            Brimstone.API.ChangeAtom(input, Brimstone.API.VanillaAtoms.quicksilver);
+                            Molecule wheel = new Molecule(); //add wheel molecule
+                            Brimstone.API.ChangeAtom(input, Brimstone.API.VanillaAtoms.quicksilver); // change to salt + animation
                             input.field_2279.field_2276 = (Maybe<class_168>)new class_168(seb, (enum_7)0, (enum_132)1, input.field_2280, projectAtomAnimation, 30f);
-                            foreach (var output in outputHexes.Zip(ravariWheel, (o, a) => new { Hexes = o, Wheel = a}))
+                            foreach (var output in outputHexes.Zip(ravariWheel, (o, a) => new { Hexes = o, Wheel = a})) // pair each hexes with an atomType then iterate
                             {
-                                wheel.method_1105(new Atom(output.Wheel), part.method_1184(output.Hexes));
+                                wheel.method_1105(new Atom(output.Wheel), part.method_1184(output.Hexes)); //add an atom at hexes with atomType
                             }
                             List<Molecule> molecules = sim.field_3823;
-                            molecules.Add(wheel);
+                            molecules.Add(wheel); //add molecule
                             activated = true;
                             
                         }
-                        if (inputs == Brimstone.API.VanillaAtoms.quintessence)
+                        if (inputs == Brimstone.API.VanillaAtoms.quintessence) //same as before but with quintessence and van berlo wheel
                         {
                             Molecule wheel = new Molecule();
                             Brimstone.API.ChangeAtom(input, Brimstone.API.VanillaAtoms.salt);
@@ -482,13 +482,15 @@ public class MetalQuintessenceParts
                             molecules.Add(wheel);
                             activated = true;
                         }
-                        if (activated)
+                        if (activated) // if the glyph are activated
                         {
-                            var SEB = sim.field_3818;
+                            //play animation
+                            var SEB = sim.field_3818; 
                             Texture[] disposalFlashAnimation = class_238.field_1989.field_90.field_240;
                             Vector2 animationPosition = HexGraphicalOffset(part.method_1161() + blossomBowl.Rotated(part.method_1163())) + new Vector2(80f, 0f);
                             SEB.field_3936.Add(new class_228(SEB, (enum_7)1, animationPosition, disposalFlashAnimation, 30f, Vector2.Zero, 0f));
 
+                            //add bond
                             Brimstone.API.JoinMoleculesAtHexes(sim, part, blossomBowl, blossomA);
                             foreach (HexIndex output in outputHexes)
                             {
