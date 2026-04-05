@@ -23,8 +23,8 @@ public class MetalQuintessenceParts
     public static Texture leadIcon = Brimstone.API.GetTexture("textures/parts/andytampan/chromaticDispersionBase/lead_symbol");
 
     public static Texture pigmentationBase = Brimstone.API.GetTexture("textures/parts/andytampan/pigmentation/pigmentationBase");
-    public static Texture pigmentationGlow = class_238.field_1989.field_97.field_374;
-    public static Texture pigmentationStroke = class_238.field_1989.field_97.field_375;
+    public static Texture pigmentationGlow = Brimstone.API.GetTexture("textures/select/andytampan/pigmentation_glow");
+    public static Texture pigmentationStroke = Brimstone.API.GetTexture("textures/select/andytampan/pigmentation_stroke");
     public static Texture pigmentationIcon = Brimstone.API.GetTexture("textures/parts/andytampan/icons/pigmentation");
     public static Texture pigmentationIconHover = Brimstone.API.GetTexture("textures/parts/andytampan/icons/pigmentation_hover");
 
@@ -32,8 +32,8 @@ public class MetalQuintessenceParts
     public static Texture blossomFlower = Brimstone.API.GetTexture("textures/parts/andytampan/blossom/blossomFlower");
     public static Texture blossomTransBowl = Brimstone.API.GetTexture("textures/parts/andytampan/blossom/blossomBowl");
     public static Texture blossomNumber = Brimstone.API.GetTexture("textures/parts/andytampan/blossom/number");
-    public static Texture blossomGlow = class_238.field_1989.field_97.field_374;
-    public static Texture blossomStroke = class_238.field_1989.field_97.field_375;
+    public static Texture blossomGlow = Brimstone.API.GetTexture("textures/select/andytampan/disposal_glow");
+    public static Texture blossomStroke = Brimstone.API.GetTexture("textures/select/andytampan/disposal_stroke");
     public static Texture blossomIcon = Brimstone.API.GetTexture("textures/parts/andytampan/icons/blossom");
     public static Texture blossomIconHover = Brimstone.API.GetTexture("textures/parts/andytampan/icons/blossom_hover");
 
@@ -41,6 +41,8 @@ public class MetalQuintessenceParts
     public static Texture chromaticDispersionGlyphBase = Brimstone.API.GetTexture("textures/parts/andytampan/chromaticDispersionBase/glyphBase");
     public static Texture chromaticDispersionIcon = Brimstone.API.GetTexture("textures/parts/andytampan/icons/chromaDispersion");
     public static Texture chromaticDispersionIconHover = Brimstone.API.GetTexture("textures/parts/andytampan/icons/chromaDispersion_hover");
+    public static Texture chromaticDispersionGlow = Brimstone.API.GetTexture("textures/select/andytampan/chromaDispersion_glow");
+    public static Texture chromaticDispersionStroke = Brimstone.API.GetTexture("textures/select/andytampan/chromaDispersion_stroke");
 
     public static Texture pigmentationBond = class_238.field_1989.field_90.field_173;
     public static Texture chromaticDispersionBond = Brimstone.API.GetTexture("textures/parts/andytampan/chromaticDispersionBase/chromaDispersionBondLoop");
@@ -91,8 +93,8 @@ public class MetalQuintessenceParts
             field_1530 = class_134.method_253("The glyph of chromatic dispersion disperse chromium into all of the metal grade", string.Empty), // Description
             field_1531 = 30, // Cost
             field_1539 = true, // Is a glyph
-            field_1549 = pigmentationGlow, // Shadow/glow
-            field_1550 = pigmentationStroke, // Stroke/outline
+            field_1549 = chromaticDispersionGlow, // Shadow/glow
+            field_1550 = chromaticDispersionStroke, // Stroke/outline
             field_1547 = chromaticDispersionIcon, // Panel icon
             field_1548 = chromaticDispersionIconHover, // Hovered panel icon
             field_1540 = new HexIndex[]
@@ -144,8 +146,8 @@ public class MetalQuintessenceParts
             field_1530 = class_134.method_253("The glyph of blossom unravel quintessence and chromium into their respective wheel", string.Empty), // Description
             field_1531 = 30, // Cost
             field_1539 = true, // Is a glyph
-            field_1549 = pigmentationGlow, // Shadow/glow
-            field_1550 = pigmentationStroke, // Stroke/outline
+            field_1549 = blossomGlow, // Shadow/glow
+            field_1550 = blossomStroke, // Stroke/outline
             field_1547 = blossomIcon, // Panel icon
             field_1548 = blossomIconHover, // Hovered panel icon
             field_1540 = new HexIndex[]
