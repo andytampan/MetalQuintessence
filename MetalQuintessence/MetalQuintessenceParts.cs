@@ -361,22 +361,38 @@ public class MetalQuintessenceParts
 
                 if (type == Pigmentation)
                 {
-
+                    HexIndex[] inputHex = new HexIndex[]
+                     {
                 
-                    if (sim.FindAtomRelative(part, pigmentationBowl).method_99(out AtomReference silver) &&
-                        sim.FindAtomRelative(part, pigmentationA).method_99(out AtomReference A) &&
-                        sim.FindAtomRelative(part, pigmentationB).method_99(out AtomReference B) &&
-                        sim.FindAtomRelative(part, pigmentationC).method_99(out AtomReference C) &&
-                        sim.FindAtomRelative(part, pigmentationD).method_99(out AtomReference D) &&
-                        sim.FindAtomRelative(part, pigmentationE).method_99(out AtomReference E) &&
-                        sim.FindAtomRelative(part, pigmentationF).method_99(out AtomReference F)
+                         pigmentationA,
+                         pigmentationB,
+                         pigmentationC,
+                         pigmentationD,
+                         pigmentationE,
+                         pigmentationF
+        
+                     };
+                    List<AtomReference> inputs = new List<AtomReference>();
+                    // Input are laid
+                    bool inputLaid = true;
+                    foreach (HexIndex input in inputHex)
+                    {
+                        if (sim.FindAtomRelative(part, input).method_99(out AtomReference atom))
+                            {
+                            inputs.Add(atom);
+                        } else
+                        {
+                            inputLaid = false;
+                            break;
+                        }
+
+                    }
+                   
+                    if (sim.FindAtomRelative(part, pigmentationBowl).method_99(out AtomReference silver) & inputLaid
                     )
                     {
 
-                        AtomReference[] inputs = new AtomReference[]
-                        {
-                            A, B, C, D, E, F
-                        };
+                        
                         List<AtomType> input = new List<AtomType>();
 
                         AtomType quicksilver = silver.field_2280;
@@ -424,14 +440,18 @@ public class MetalQuintessenceParts
                       blossomE,
                       blossomF,
                     };
-                
-                if (sim.FindAtomRelative(part, blossomBowl).method_99(out AtomReference input) &&
-                        !sim.FindAtomRelative(part, blossomA).method_99(out AtomReference a) &&
-                        !sim.FindAtomRelative(part, blossomB).method_99(out AtomReference b) &&
-                        !sim.FindAtomRelative(part, blossomC).method_99(out AtomReference c) &&
-                        !sim.FindAtomRelative(part, blossomD).method_99(out AtomReference d) &&
-                        !sim.FindAtomRelative(part, blossomE).method_99(out AtomReference e) &&
-                        !sim.FindAtomRelative(part, blossomF).method_99(out AtomReference f))
+                    bool blocked = false;
+                    foreach (HexIndex output in outputHexes)
+                    {
+                       
+                       if ( sim.FindAtomRelative(part, blossomA).method_1085() == true )
+                        {
+                            blocked = true;
+                            break;
+                        }
+                           
+                    }
+                if (sim.FindAtomRelative(part, blossomBowl).method_99(out AtomReference input) && !blocked)
                     {
                         pss[part].field_2744 = new AtomType[1] { input.field_2280 };
                         AtomType inputs = pss[part].field_2744[0];
@@ -470,7 +490,7 @@ public class MetalQuintessenceParts
                         if (wheelType != null) // if there's an atomtype which means one of the requirement above are satisfied
                         {
                             
-                            Brimstone.API.ChangeAtom(input, wheelType[6]); //transmute atom into the seventh atomtype i.e: the center atom with animation
+                            Brimstone.API.ChangeAtom(input, wheelType[6]); // do animation and transmute atom into the seventh atomtype i.e: the center atom
                             input.field_2279.field_2276 = (Maybe<class_168>)new class_168(seb, (enum_7)0, (enum_132)1, input.field_2280, projectAtomAnimation, 30f);
                             Molecule wheel = new Molecule(); // create new molecule 
                             foreach (var output in outputHexes.Zip(wheelType, (o, a) => new { Hexes = o, Wheel = a })) //foreach outputhexes and atomtype pair
