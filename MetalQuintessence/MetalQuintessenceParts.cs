@@ -435,62 +435,58 @@ public class MetalQuintessenceParts
                     {
                         pss[part].field_2744 = new AtomType[1] { input.field_2280 };
                         AtomType inputs = pss[part].field_2744[0];
-                        bool activated = false;
-                        AtomType[] ravariWheel = new AtomType[]
+
+                        AtomType[] wheelType = new AtomType[6]; //declare an empty atomtype list
+                        
+                        // support for other atomtypes if someone want to add one maybe?
+
+                        if (inputs == MetalQuintessenceAtoms.Chromium) //if chromium is entered then fill atomtype with ravari wheel atom
                         {
+                            wheelType = new AtomType[]
+                            {
                             Brimstone.API.VanillaAtoms.lead,
                             Brimstone.API.VanillaAtoms.tin,
                             Brimstone.API.VanillaAtoms.iron,
                             Brimstone.API.VanillaAtoms.copper,
                             Brimstone.API.VanillaAtoms.silver,
-                            Brimstone.API.VanillaAtoms.gold
-                        };
-                        AtomType[] vanBerloWheel = new AtomType[]
+                            Brimstone.API.VanillaAtoms.gold,
+                            Brimstone.API.VanillaAtoms.quicksilver
+                            };
+
+                        }
+                        if (inputs == Brimstone.API.VanillaAtoms.quintessence) //if quintessence is entered then fill atomtype with van berlo wheel atom
                         {
+                            wheelType = new AtomType[]
+                            {
                             Brimstone.API.VanillaAtoms.water,
                             Brimstone.API.VanillaAtoms.salt,
                             Brimstone.API.VanillaAtoms.earth,
                             Brimstone.API.VanillaAtoms.fire,
                             Brimstone.API.VanillaAtoms.salt,
-                            Brimstone.API.VanillaAtoms.air
-                        };
-
-                        if (inputs == MetalQuintessenceAtoms.Chromium)
+                            Brimstone.API.VanillaAtoms.air,
+                            Brimstone.API.VanillaAtoms.salt
+                            };
+                        }
+                        if (wheelType != null) // if there's an atomtype which means one of the requirement above are satisfied
                         {
-                            Molecule wheel = new Molecule(); //add wheel molecule
-                            Brimstone.API.ChangeAtom(input, Brimstone.API.VanillaAtoms.quicksilver); // change to salt + animation
-                            input.field_2279.field_2276 = (Maybe<class_168>)new class_168(seb, (enum_7)0, (enum_132)1, input.field_2280, projectAtomAnimation, 30f);
-                            foreach (var output in outputHexes.Zip(ravariWheel, (o, a) => new { Hexes = o, Wheel = a})) // pair each hexes with an atomType then iterate
-                            {
-                                wheel.method_1105(new Atom(output.Wheel), part.method_1184(output.Hexes)); //add an atom at hexes with atomType
-                            }
-                            List<Molecule> molecules = sim.field_3823;
-                            molecules.Add(wheel); //add molecule
-                            activated = true;
                             
-                        }
-                        if (inputs == Brimstone.API.VanillaAtoms.quintessence) //same as before but with quintessence and van berlo wheel
-                        {
-                            Molecule wheel = new Molecule();
-                            Brimstone.API.ChangeAtom(input, Brimstone.API.VanillaAtoms.salt);
+                            Brimstone.API.ChangeAtom(input, wheelType[6]); //transmute atom into the seventh atomtype i.e: the center atom with animation
                             input.field_2279.field_2276 = (Maybe<class_168>)new class_168(seb, (enum_7)0, (enum_132)1, input.field_2280, projectAtomAnimation, 30f);
-                            foreach (var output in outputHexes.Zip(vanBerloWheel, (o, a) => new { Hexes = o, Wheel = a }))
+                            Molecule wheel = new Molecule(); // create new molecule 
+                            foreach (var output in outputHexes.Zip(wheelType, (o, a) => new { Hexes = o, Wheel = a })) //foreach outputhexes and atomtype pair
                             {
-                                wheel.method_1105(new Atom(output.Wheel), part.method_1184(output.Hexes));
+                                wheel.method_1105(new Atom(output.Wheel), part.method_1184(output.Hexes)); //create new atom at outputhexes and atomtype
                             }
-                            List<Molecule> molecules = sim.field_3823;
+                            List<Molecule> molecules = sim.field_3823; 
                             molecules.Add(wheel);
-                            activated = true;
-                        }
-                        if (activated) // if the glyph are activated
-                        {
+
                             //play animation
                             var SEB = sim.field_3818; 
                             Texture[] disposalFlashAnimation = class_238.field_1989.field_90.field_240;
                             Vector2 animationPosition = HexGraphicalOffset(part.method_1161() + blossomBowl.Rotated(part.method_1163())) + new Vector2(80f, 0f);
                             SEB.field_3936.Add(new class_228(SEB, (enum_7)1, animationPosition, disposalFlashAnimation, 30f, Vector2.Zero, 0f));
 
-                            //add bond
+                            //joins the molecule and add bond
                             Brimstone.API.JoinMoleculesAtHexes(sim, part, blossomBowl, blossomA);
                             foreach (HexIndex output in outputHexes)
                             {
