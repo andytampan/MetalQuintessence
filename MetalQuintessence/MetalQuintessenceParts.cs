@@ -411,10 +411,11 @@ public class MetalQuintessenceParts
                             Brimstone.API.VanillaAtoms.gold,
                         };
                         bool requirement = true; //assume requirement is true, then
-                        foreach (AtomType atomtype in metals) //iterate if each metal is contained in the inputlist
-                            requirement = (input.Contains(atomtype)) && requirement;
-                        foreach (AtomReference atomReference in inputs) //iterate if each atom are singular and dropped
-                            requirement = !atomReference.field_2281 && !atomReference.field_2282 && requirement;
+                        foreach (var atom in metals.Zip(inputs, (a, r) => new { type = a, reference = r })) //this iterate each atomtype and reference as one.
+                        {  
+                            if (!metals.Contains(atom.type)) { requirement = false; break; }; //iterate if each metal is contained in the inputlist
+                            if (atom.reference.field_2281 && atom.reference.field_2282) { requirement = false; break; }; //iterate if each atom are singular and dropped
+                                }
                         if ( quicksilver == Brimstone.API.VanillaAtoms.quicksilver && requirement) // if requirement is still true, and if the input are quicksilver
                         {   
                             foreach (AtomReference atom in inputs) //remove each atom one by one
