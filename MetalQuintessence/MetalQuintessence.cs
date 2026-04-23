@@ -18,7 +18,7 @@ public class MetalQuintessence : QuintessentialMod
     public override void Load()
     {
         Logger.Log("Metal Quintessence - Implementing sanity check");
-
+        MetalQuintessenceSound.LoadAllCustomSounds();
     }
 
     public override void PostLoad()

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using PartType = class_139;
 using Permissions = enum_149;
 using Texture = class_256;
@@ -77,8 +78,9 @@ public class MetalQuintessenceParts
     public static readonly HexIndex chromeDispersionGlyphA = new(1, -1);
     public static readonly HexIndex chromeDispersionGlyphB = new(2, -2);
 
+    public static MethodInfo PrivateMethod<T>(string method) => typeof(T).GetMethod(method, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
-
+    public static void playSound(Sim sim_self, Sound sound) => PrivateMethod<Sim>("method_1856").Invoke(sim_self, new object[] { sound });
 
     public static PartType ChromeDispersion;
     public static PartType Pigmentation;
@@ -317,7 +319,8 @@ public class MetalQuintessenceParts
                 {
                     if (sim.FindAtomRelative(part, chromeDispersionInput).method_99(out AtomReference chromium) && !chromium.field_2281 && !chromium.field_2282 && chromium.field_2280 == MetalQuintessenceAtoms.Chromium)
                     {
-                        bool blocked = false;
+                            playSound(sim, MetalQuintessenceSound.chromatic_dispersionSound);
+                            bool blocked = false; //
                         foreach (HexIndex h in outputHexes)
                         {
                             if (sim.FindAtomRelative(part, h).method_1085())
@@ -417,7 +420,8 @@ public class MetalQuintessenceParts
                             if (atom.reference.field_2281 && atom.reference.field_2282) { requirement = false; break; }; //iterate if each atom are singular and dropped
                                 }
                         if ( quicksilver == Brimstone.API.VanillaAtoms.quicksilver && requirement) // if requirement is still true, and if the input are quicksilver
-                        {   
+                        {
+                            playSound(sim, MetalQuintessenceSound.pigmentationSound);
                             foreach (AtomReference atom in inputs) //remove each atom one by one
                             {
                                 Brimstone.API.RemoveAtom(atom);
@@ -500,6 +504,9 @@ public class MetalQuintessenceParts
                             }
                             List<Molecule> molecules = sim.field_3823; 
                             molecules.Add(wheel);
+
+                            // play sound
+                            playSound(sim, MetalQuintessenceSound.blossomSound);
 
                             //play animation
                             var SEB = sim.field_3818; 
