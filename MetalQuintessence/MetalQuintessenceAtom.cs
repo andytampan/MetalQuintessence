@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 using PartType = class_139;
 using Permissions = enum_149;
 using Texture = class_256;
-using Brimstone;
 
 namespace MetalQuintessence;
 
 public class MetalQuintessenceAtoms
 {
     public static AtomType Chromium;
+
     public static void AddAtomTypes()
     {
 
@@ -26,6 +26,6 @@ public class MetalQuintessenceAtoms
             );
 
         QApi.AddAtomType(Chromium);
-        ReductiveMetallurgy.API.applyProliferationRule(Chromium);
+        
     }
 }

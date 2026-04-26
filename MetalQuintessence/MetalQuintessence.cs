@@ -1,8 +1,8 @@
 ﻿using Quintessential;
-using ReductiveMetallurgy;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Reflection;
 using PartType = class_139;
 using Permissions = enum_149;
 using Texture = class_256;
@@ -11,7 +11,7 @@ namespace MetalQuintessence;
 
 public class MetalQuintessence : QuintessentialMod
 {
-    public static AtomType Chromium;
+    public static readonly bool ReductiveMetallurgyLoaded = Brimstone.API.IsModLoaded("ReductiveMetallurgy");
 
     public const string PigmentationPermission = "MetalQuintessence:Pigmentation";
     public const string BlossomPermission = "MetalQuintessence:Blossom";
@@ -35,12 +35,17 @@ public class MetalQuintessence : QuintessentialMod
         QApi.AddPuzzlePermission(PigmentationPermission, "Glyph of Pigmentation", "MetalQuintessence");
         QApi.AddPuzzlePermission(BlossomPermission, "Glyph of Blossom", "MetalQuintessence");
         QApi.AddPuzzlePermission(ChromeDispersionPermission, "Glyph of Chrome Dispersion", "MetalQuintessence");
-        
+
         /* if (FTSIGCTULoaded)
         {
             LoadMapRules();
         }
         */
+        if (ReductiveMetallurgyLoaded)
+        {
+            Logger.Log("Massively increasing the risk of your alchemical machine exploding");
+            ReductiveMetallurgy.API.applyProliferationRule(MetalQuintessenceAtoms.Chromium);
+        }
 
     }
     public override void Unload()

@@ -57,7 +57,6 @@
 		</Reference>
 		<Reference Include="ReductiveMetallurgy">
 		  <HintPath>..\..\ReductiveMetallurgy_1.0.1\ReductiveMetallurgy.dll</HintPath>
-			<Private>false</Private>
 		</Reference>
 		<Reference Include="YamlDotNet">
 			<HintPath>$(OpusPath)\YamlDotNet.dll</HintPath>
