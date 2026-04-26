@@ -25,30 +25,43 @@
 	<ItemGroup>
 		<Reference Include="Brimstone">
 		  <HintPath>..\..\Brimstone_2.0.2\Brimstone.dll</HintPath>
+		 <Private>false</Private>
 		</Reference>
 		<Reference Include="Lightning">
 			<HintPath>$(OpusPath)\ModdedLightning.exe</HintPath>
+		<Private>false</Private>
 		</Reference>
 		<Reference Include="MMHOOK_ModdedLightning">
 			<HintPath>$(OpusPath)\MMHOOK_ModdedLightning.dll</HintPath>
+			<Private>false</Private>
 		</Reference>
 		<Reference Include="Mono.Cecil">
 			<HintPath>$(OpusPath)\Mono.Cecil.dll</HintPath>
+			<Private>false</Private>
 		</Reference>
 		<Reference Include="MonoMod">
 			<HintPath>$(OpusPath)\MonoMod.exe</HintPath>
+			<Private>false</Private>
 		</Reference>
 		<Reference Include="MonoMod.RuntimeDetour">
 			<HintPath>$(OpusPath)\MonoMod.RuntimeDetour.dll</HintPath>
+			<Private>false</Private>
 		</Reference>
 		<Reference Include="MonoMod.RuntimeDetour.HookGen">
 			<HintPath>$(OpusPath)\MonoMod.RuntimeDetour.HookGen.exe</HintPath>
+			<Private>false</Private>
 		</Reference>
 		<Reference Include="MonoMod.Utils">
 			<HintPath>$(OpusPath)\MonoMod.Utils.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="ReductiveMetallurgy">
+		  <HintPath>..\..\ReductiveMetallurgy_1.0.1\ReductiveMetallurgy.dll</HintPath>
+			<Private>false</Private>
 		</Reference>
 		<Reference Include="YamlDotNet">
 			<HintPath>$(OpusPath)\YamlDotNet.dll</HintPath>
+			<Private>false</Private>
 		</Reference>
 	</ItemGroup>
 

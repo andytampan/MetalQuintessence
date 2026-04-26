@@ -26,5 +26,6 @@ public class MetalQuintessenceAtoms
             );
 
         QApi.AddAtomType(Chromium);
+        ReductiveMetallurgy.API.applyProliferationRule(Chromium);
     }
 }

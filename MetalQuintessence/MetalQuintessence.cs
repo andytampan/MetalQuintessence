@@ -1,4 +1,5 @@
 ﻿using Quintessential;
+using ReductiveMetallurgy;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -34,6 +35,7 @@ public class MetalQuintessence : QuintessentialMod
         QApi.AddPuzzlePermission(PigmentationPermission, "Glyph of Pigmentation", "MetalQuintessence");
         QApi.AddPuzzlePermission(BlossomPermission, "Glyph of Blossom", "MetalQuintessence");
         QApi.AddPuzzlePermission(ChromeDispersionPermission, "Glyph of Chrome Dispersion", "MetalQuintessence");
+        
         /* if (FTSIGCTULoaded)
         {
             LoadMapRules();
