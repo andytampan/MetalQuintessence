@@ -44,7 +44,7 @@ public class MetalQuintessence : QuintessentialMod
         if (ReductiveMetallurgyLoaded)
         {
             Logger.Log("Massively increasing the risk of your alchemical machine exploding");
-            ReductiveMetallurgy.API.applyProliferationRule(MetalQuintessenceAtoms.Chromium);
+            ReductiveMetallurgy.API.addProliferationRule(MetalQuintessenceAtoms.Chromium);
         }
 
     }
