@@ -1,4 +1,5 @@
-﻿using Quintessential;
+﻿using Brimstone;
+using Quintessential;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -461,8 +462,8 @@ public class MetalQuintessenceParts
                         pss[part].field_2744 = new AtomType[1] { input.field_2280 };
                         AtomType inputs = pss[part].field_2744[0];
 
-                        AtomType[] wheelType = new AtomType[6]; //declare an empty atomtype list
-                        
+                        AtomType[] wheelType = null; //declare an empty atomtype list
+                         //placeholder 
                         // support for other atomtypes if someone want to add one maybe?
 
                         if (inputs == MetalQuintessenceAtoms.Chromium) //if chromium is entered then fill atomtype with ravari wheel atom
@@ -476,6 +477,7 @@ public class MetalQuintessenceParts
                             Brimstone.API.VanillaAtoms.silver,
                             Brimstone.API.VanillaAtoms.gold,
                             Brimstone.API.VanillaAtoms.quicksilver
+                            
                             };
 
                         }
