@@ -167,6 +167,31 @@ public class MetalQuintessenceParts
             field_1551 = Permissions.None,
             CustomPermissionCheck = perms => perms.Contains(MetalQuintessence.BlossomPermission)
         };
+            AtomType[] ChromiumWheel = new AtomType[]
+            {
+                            Brimstone.API.VanillaAtoms.lead,
+                            Brimstone.API.VanillaAtoms.tin,
+                            Brimstone.API.VanillaAtoms.iron,
+                            Brimstone.API.VanillaAtoms.copper,
+                            Brimstone.API.VanillaAtoms.silver,
+                            Brimstone.API.VanillaAtoms.gold,
+                            Brimstone.API.VanillaAtoms.quicksilver
+
+            };
+        API.addBlossomRule(MetalQuintessenceAtoms.Chromium, ChromiumWheel);
+        
+            AtomType[] QuintessenceWheel = new AtomType[]
+            {
+                            Brimstone.API.VanillaAtoms.water,
+                            Brimstone.API.VanillaAtoms.salt,
+                            Brimstone.API.VanillaAtoms.earth,
+                            Brimstone.API.VanillaAtoms.fire,
+                            Brimstone.API.VanillaAtoms.salt,
+                            Brimstone.API.VanillaAtoms.air,
+                            Brimstone.API.VanillaAtoms.salt
+            };
+        API.addBlossomRule(Brimstone.API.VanillaAtoms.quintessence, QuintessenceWheel);
+
         QApi.AddPartTypeToPanel(ChromeDispersion, false);
         QApi.AddPartTypeToPanel(Pigmentation, false);
         QApi.AddPartTypeToPanel(Blossom, false);
@@ -466,34 +491,7 @@ public class MetalQuintessenceParts
                          //placeholder 
                         // support for other atomtypes if someone want to add one maybe?
 
-                        if (inputs == MetalQuintessenceAtoms.Chromium) //if chromium is entered then fill atomtype with ravari wheel atom
-                        {
-                            wheelType = new AtomType[]
-                            {
-                            Brimstone.API.VanillaAtoms.lead,
-                            Brimstone.API.VanillaAtoms.tin,
-                            Brimstone.API.VanillaAtoms.iron,
-                            Brimstone.API.VanillaAtoms.copper,
-                            Brimstone.API.VanillaAtoms.silver,
-                            Brimstone.API.VanillaAtoms.gold,
-                            Brimstone.API.VanillaAtoms.quicksilver
-                            
-                            };
-
-                        }
-                        if (inputs == Brimstone.API.VanillaAtoms.quintessence) //if quintessence is entered then fill atomtype with van berlo wheel atom
-                        {
-                            wheelType = new AtomType[]
-                            {
-                            Brimstone.API.VanillaAtoms.water,
-                            Brimstone.API.VanillaAtoms.salt,
-                            Brimstone.API.VanillaAtoms.earth,
-                            Brimstone.API.VanillaAtoms.fire,
-                            Brimstone.API.VanillaAtoms.salt,
-                            Brimstone.API.VanillaAtoms.air,
-                            Brimstone.API.VanillaAtoms.salt
-                            };
-                        }
+                        API.applyBlossomRule(inputs, out wheelType);
                         if (wheelType != null) // if there's an atomtype which means one of the requirement above are satisfied
                         {
                             
