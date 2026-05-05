@@ -69,9 +69,9 @@ public class MetalQuintessenceParts
     public static readonly HexIndex blossomF = new(0, -1);
 
     public static readonly HexIndex chromeDispersionInput = new(0, 0);
-     public static readonly HexIndex chromeDispersionLead = new(1, 0);
+    public static readonly HexIndex chromeDispersionLead = new(1, 0);
     public static readonly HexIndex chromeDispersionTin = new(2, -1);
-    public static readonly HexIndex chromeDispersionIron = new(3, -2); 
+    public static readonly HexIndex chromeDispersionIron = new(3, -2);
     public static readonly HexIndex chromeDispersionCopper = new(3, -3);
     public static readonly HexIndex chromeDispersionSilver = new(2, -3);
     public static readonly HexIndex chromeDispersionGold = new(1, -2);
@@ -156,19 +156,19 @@ public class MetalQuintessenceParts
             field_1540 = new HexIndex[]
             {
                 blossomBowl,
-                blossomA,
+                /* blossomA,
                 blossomB,
                 blossomC,
                 blossomD,
-                blossomE,
+                blossomE,*/
                 blossomF
 
             },
             field_1551 = Permissions.None,
             CustomPermissionCheck = perms => perms.Contains(MetalQuintessence.BlossomPermission)
         };
-            AtomType[] ChromiumWheel = new AtomType[]
-            {
+        AtomType[] ChromiumWheel = new AtomType[]
+        {
                             Brimstone.API.VanillaAtoms.lead,
                             Brimstone.API.VanillaAtoms.tin,
                             Brimstone.API.VanillaAtoms.iron,
@@ -177,11 +177,11 @@ public class MetalQuintessenceParts
                             Brimstone.API.VanillaAtoms.gold,
                             Brimstone.API.VanillaAtoms.quicksilver
 
-            };
+        };
         API.addBlossomRule(MetalQuintessenceAtoms.Chromium, ChromiumWheel);
-        
-            AtomType[] QuintessenceWheel = new AtomType[]
-            {
+
+        AtomType[] QuintessenceWheel = new AtomType[]
+        {
                             Brimstone.API.VanillaAtoms.water,
                             Brimstone.API.VanillaAtoms.salt,
                             Brimstone.API.VanillaAtoms.earth,
@@ -189,7 +189,7 @@ public class MetalQuintessenceParts
                             Brimstone.API.VanillaAtoms.salt,
                             Brimstone.API.VanillaAtoms.air,
                             Brimstone.API.VanillaAtoms.salt
-            };
+        };
         API.addBlossomRule(Brimstone.API.VanillaAtoms.quintessence, QuintessenceWheel);
 
         QApi.AddPartTypeToPanel(ChromeDispersion, false);
@@ -288,7 +288,7 @@ public class MetalQuintessenceParts
                 pigmentationF
 
             };
-            foreach (HexIndex input in inputHex )
+            foreach (HexIndex input in inputHex)
             {
                 renderer.method_529(ringhole, input, Vector2.Zero);
                 renderer.method_529(leadIcon, input, Vector2.Zero);
@@ -313,10 +313,10 @@ public class MetalQuintessenceParts
 
             };
             foreach (HexIndex input in inputHex) {
-            renderer.method_529(blossomTransBowl, input, Vector2.Zero);
+                renderer.method_529(blossomTransBowl, input, Vector2.Zero);
             }
 
-            renderer.method_529(blossomNumber, blossomA, Vector2.Zero);
+            renderer.method_529(blossomNumber, blossomF, Vector2.Zero);
 
         });
         QApi.RunAfterCycle((sim, first)
@@ -329,7 +329,7 @@ public class MetalQuintessenceParts
             {
                 PartType type = part.method_1159();
                 if (type == ChromeDispersion)
-                { 
+                {
                     HexIndex[] outputHexes = new HexIndex[7]
                     {
                    chromeDispersionLead,
@@ -341,36 +341,36 @@ public class MetalQuintessenceParts
                    chromeDispersionQuicksilver
                     };
 
-                if (first && !pss[part].field_2743)
-                {
-                    if (sim.FindAtomRelative(part, chromeDispersionInput).method_99(out AtomReference chromium) && !chromium.field_2281 && !chromium.field_2282 && chromium.field_2280 == MetalQuintessenceAtoms.Chromium)
+                    if (first && !pss[part].field_2743)
                     {
+                        if (sim.FindAtomRelative(part, chromeDispersionInput).method_99(out AtomReference chromium) && !chromium.field_2281 && !chromium.field_2282 && chromium.field_2280 == MetalQuintessenceAtoms.Chromium)
+                        {
                             playSound(sim, MetalQuintessenceSound.chromatic_dispersionSound);
                             bool blocked = false; //
-                        foreach (HexIndex h in outputHexes)
-                        {
-                            if (sim.FindAtomRelative(part, h).method_1085())
-                            {
-                                blocked = true;
-                                break;
-                            }
-                        }
-                        if (!blocked)
-                        {
-                            Brimstone.API.RemoveAtom(chromium);
-                            Brimstone.API.DrawFallingAtom(seb, chromium);
-                            pss[part].field_2743 = true;
                             foreach (HexIndex h in outputHexes)
                             {
-                                Brimstone.API.AddSmallCollider(sim, part, h);
+                                if (sim.FindAtomRelative(part, h).method_1085())
+                                {
+                                    blocked = true;
+                                    break;
+                                }
+                            }
+                            if (!blocked)
+                            {
+                                Brimstone.API.RemoveAtom(chromium);
+                                Brimstone.API.DrawFallingAtom(seb, chromium);
+                                pss[part].field_2743 = true;
+                                foreach (HexIndex h in outputHexes)
+                                {
+                                    Brimstone.API.AddSmallCollider(sim, part, h);
+                                }
                             }
                         }
                     }
-                }
-                else if (pss[part].field_2743)
-                {
-                    AtomType[] cardinalAtoms = new AtomType[7]
+                    else if (pss[part].field_2743)
                     {
+                        AtomType[] cardinalAtoms = new AtomType[7]
+                        {
                         Brimstone.API.VanillaAtoms.lead,
                         Brimstone.API.VanillaAtoms.tin,
                         Brimstone.API.VanillaAtoms.iron,
@@ -378,28 +378,28 @@ public class MetalQuintessenceParts
                         Brimstone.API.VanillaAtoms.silver,
                         Brimstone.API.VanillaAtoms.gold,
                         Brimstone.API.VanillaAtoms.quicksilver
-                    };
+                        };
 
-                    for (int i = 0; i < 7; i++)
-                    {
-                        // Spawn new atom
-                        Brimstone.API.AddAtom(sim, part, outputHexes[i], cardinalAtoms[i]);
+                        for (int i = 0; i < 7; i++)
+                        {
+                            // Spawn new atom
+                            Brimstone.API.AddAtom(sim, part, outputHexes[i], cardinalAtoms[i]);
+                        }
                     }
-                }
                 }
 
                 if (type == Pigmentation)
                 {
                     HexIndex[] inputHex = new HexIndex[]
                      {
-                
+
                          pigmentationA,
                          pigmentationB,
                          pigmentationC,
                          pigmentationD,
                          pigmentationE,
                          pigmentationF
-        
+
                      };
                     List<AtomReference> inputs = new List<AtomReference>();
                     // Input are laid
@@ -407,7 +407,7 @@ public class MetalQuintessenceParts
                     foreach (HexIndex input in inputHex)
                     {
                         if (sim.FindAtomRelative(part, input).method_99(out AtomReference atom))
-                            {
+                        {
                             inputs.Add(atom);
                         } else
                         {
@@ -416,12 +416,12 @@ public class MetalQuintessenceParts
                         }
 
                     }
-                   
+
                     if (sim.FindAtomRelative(part, pigmentationBowl).method_99(out AtomReference silver) & inputLaid
                     )
                     {
 
-                        
+
                         List<AtomType> input = new List<AtomType>();
 
                         AtomType quicksilver = silver.field_2280;
@@ -430,7 +430,7 @@ public class MetalQuintessenceParts
                             input.Add(atomReference.field_2280);
                         }
 
-                        AtomType[] metals = new AtomType[] 
+                        AtomType[] metals = new AtomType[]
                         {
                             Brimstone.API.VanillaAtoms.lead,
                             Brimstone.API.VanillaAtoms.tin,
@@ -441,11 +441,11 @@ public class MetalQuintessenceParts
                         };
                         bool requirement = true; //assume requirement is true, then
                         foreach (var atom in metals.Zip(inputs, (a, r) => new { type = a, reference = r })) //this iterate each atomtype and reference as one.
-                        {  
+                        {
                             if (!metals.Contains(atom.type)) { requirement = false; break; }; //iterate if each metal is contained in the inputlist
                             if (atom.reference.field_2281 && atom.reference.field_2282) { requirement = false; break; }; //iterate if each atom are singular and dropped
-                                }
-                        if ( quicksilver == Brimstone.API.VanillaAtoms.quicksilver && requirement) // if requirement is still true, and if the input are quicksilver
+                        }
+                        if (quicksilver == Brimstone.API.VanillaAtoms.quicksilver && requirement) // if requirement is still true, and if the input are quicksilver
                         {
                             playSound(sim, MetalQuintessenceSound.pigmentationSound);
                             foreach (AtomReference atom in inputs) //remove each atom one by one
@@ -471,54 +471,66 @@ public class MetalQuintessenceParts
                       blossomE,
                       blossomF,
                     };
-                    bool blocked = false;
-                    foreach (HexIndex output in outputHexes)
+
+                    bool[] blocked = new bool[6];
+                    for (int i = 0; i < 6; i++)
                     {
-                       
-                       if ( sim.FindAtomRelative(part, blossomA).method_1085() == true )
+                        if (sim.FindAtomRelative(part, outputHexes[i]).method_1085())
                         {
-                            blocked = true;
-                            break;
+                            blocked[i] = true;
+                        } else
+                        {
+                           blocked[i] = false;
                         }
-                           
                     }
-                if (sim.FindAtomRelative(part, blossomBowl).method_99(out AtomReference input) && !blocked)
+
+                    
+                    if (sim.FindAtomRelative(part, blossomBowl).method_99(out AtomReference input) && blocked.Contains(false))
                     {
                         pss[part].field_2744 = new AtomType[1] { input.field_2280 };
                         AtomType inputs = pss[part].field_2744[0];
 
                         AtomType[] wheelType = null; //declare an empty atomtype list
-                         //placeholder 
-                        // support for other atomtypes if someone want to add one maybe?
+                                                     //placeholder 
+                                                     // support for other atomtypes if someone want to add one maybe?
 
                         API.applyBlossomRule(inputs, out wheelType);
                         if (wheelType != null) // if there's an atomtype which means one of the requirement above are satisfied
                         {
-                            
+
                             Brimstone.API.ChangeAtom(input, wheelType[6]); // do animation and transmute atom into the seventh atomtype i.e: the center atom
+
                             input.field_2279.field_2276 = (Maybe<class_168>)new class_168(seb, (enum_7)0, (enum_132)1, input.field_2280, projectAtomAnimation, 30f);
+                            
                             Molecule wheel = new Molecule(); // create new molecule 
-                            foreach (var output in outputHexes.Zip(wheelType, (o, a) => new { Hexes = o, Wheel = a })) //foreach outputhexes and atomtype pair
+
+                            for (int i = 0; i < 6; i++)
                             {
-                                wheel.method_1105(new Atom(output.Wheel), part.method_1184(output.Hexes)); //create new atom at outputhexes and atomtype
+                                if (!blocked[i])  wheel.method_1105(new Atom(wheelType[i]), part.method_1184(outputHexes[i]));
                             }
-                            List<Molecule> molecules = sim.field_3823; 
+
+                            List<Molecule> molecules = sim.field_3823;
                             molecules.Add(wheel);
+
+
 
                             // play sound
                             playSound(sim, MetalQuintessenceSound.blossomSound);
 
+
+
                             //play animation
-                            var SEB = sim.field_3818; 
+                            var SEB = sim.field_3818;
                             Texture[] disposalFlashAnimation = class_238.field_1989.field_90.field_240;
                             Vector2 animationPosition = HexGraphicalOffset(part.method_1161() + blossomBowl.Rotated(part.method_1163())) + new Vector2(80f, 0f);
                             SEB.field_3936.Add(new class_228(SEB, (enum_7)1, animationPosition, disposalFlashAnimation, 30f, Vector2.Zero, 0f));
 
+
                             //joins the molecule and add bond
-                            Brimstone.API.JoinMoleculesAtHexes(sim, part, blossomBowl, blossomA);
-                            foreach (HexIndex output in outputHexes)
+                            Brimstone.API.JoinMoleculesAtHexes(sim, part, blossomBowl, blossomF);
+                            for (int i = 0; i < 6; i++)
                             {
-                            Brimstone.API.AddBond(sim, part, blossomBowl, output, enum_126.Standard, true, false);
+                                if (!blocked[i]) Brimstone.API.AddBond(sim, part, blossomBowl, outputHexes[i], enum_126.Standard, true, false);
                             }
                         }
                     }
@@ -526,8 +538,18 @@ public class MetalQuintessenceParts
             }
 
         });
-            
-        }
+
         
+    }
+    public static void LoadMirrorRules()
+    {
+        
+        FTSIGCTU.MirrorTool.addRule(ChromeDispersion, FTSIGCTU.MirrorTool.mirrorVanBerlo);
+        FTSIGCTU.MirrorTool.addRule(Pigmentation, FTSIGCTU.MirrorTool.mirrorHorizontalPart0_0);
+        FTSIGCTU.MirrorTool.addRule(Blossom, FTSIGCTU.MirrorTool.mirrorVanBerlo);
+    }
+
+
+
 }
 

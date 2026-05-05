@@ -1,8 +1,9 @@
 ﻿using Quintessential;
+using ReductiveMetallurgy;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using PartType = class_139;
 using Permissions = enum_149;
 using Texture = class_256;
@@ -12,6 +13,7 @@ namespace MetalQuintessence;
 public class MetalQuintessence : QuintessentialMod
 {
     public static readonly bool ReductiveMetallurgyLoaded = Brimstone.API.IsModLoaded("ReductiveMetallurgy");
+    public static readonly bool FTSIGCTULoaded = Brimstone.API.IsModLoaded("FTSIGCTU");
 
     public const string PigmentationPermission = "MetalQuintessence:Pigmentation";
     public const string BlossomPermission = "MetalQuintessence:Blossom";
@@ -30,20 +32,23 @@ public class MetalQuintessence : QuintessentialMod
 
     public override void LoadPuzzleContent()
     {
+
         MetalQuintessenceAtoms.AddAtomTypes();
         MetalQuintessenceParts.AddPartsType();
         QApi.AddPuzzlePermission(PigmentationPermission, "Glyph of Pigmentation", "MetalQuintessence");
         QApi.AddPuzzlePermission(BlossomPermission, "Glyph of Blossom", "MetalQuintessence");
         QApi.AddPuzzlePermission(ChromeDispersionPermission, "Glyph of Chrome Dispersion", "MetalQuintessence");
+        
 
-        /* if (FTSIGCTULoaded)
+        if (FTSIGCTULoaded)
         {
-            LoadMapRules();
+            Logger.Log("[MetalQuintessence] Detected optional dependency 'FTSIGCTU' - adding mirror rules for parts.");
+            MetalQuintessenceParts.LoadMirrorRules();
         }
-        */
+        
         if (ReductiveMetallurgyLoaded)
         {
-            Logger.Log("Massively increasing the risk of your alchemical machine exploding");
+            Logger.Log("[MetalQuintessence] Detected optional dependency 'Reductive Metallurgy' - exploding your alchemical machine.");
             ReductiveMetallurgy.API.addProliferationRule(MetalQuintessenceAtoms.Chromium);
         }
 

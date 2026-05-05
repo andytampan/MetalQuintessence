@@ -27,6 +27,9 @@
 		  <HintPath>..\..\Brimstone_2.0.2\Brimstone.dll</HintPath>
 		 <Private>false</Private>
 		</Reference>
+		<Reference Include="FTSIGCTU">
+		  <HintPath>..\..\outdated\FTSIGCTU.dll</HintPath>
+		</Reference>
 		<Reference Include="Lightning">
 			<HintPath>$(OpusPath)\ModdedLightning.exe</HintPath>
 		<Private>false</Private>
