@@ -1,5 +1,11 @@
 ﻿using Brimstone;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
+using MonoMod.Utils;
+
+
 using Quintessential;
+using ReductiveMetallurgy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +19,7 @@ namespace MetalQuintessence;
 
 public class MetalQuintessenceParts
 {
+
     // note to self when dealing with offset, but 1 hexagon = 82 (just treat this like a rough value i don't know wtf going on)
     public static Texture ringhole = class_238.field_1989.field_90.field_255.field_293;
 
@@ -87,6 +94,16 @@ public class MetalQuintessenceParts
     public static PartType Pigmentation;
     public static PartType Blossom;
 
+    public static HexIndex[] inputHex = new HexIndex[]
+        {
+                blossomA,
+                blossomB,
+                blossomC,
+                blossomD,
+                blossomE,
+                blossomF
+
+        };
     public static void AddPartsType()
     {
         ChromeDispersion = new()
@@ -156,11 +173,11 @@ public class MetalQuintessenceParts
             field_1540 = new HexIndex[]
             {
                 blossomBowl,
-                /* blossomA,
+                blossomA,
                 blossomB,
                 blossomC,
                 blossomD,
-                blossomE,*/
+                blossomE,
                 blossomF
 
             },
@@ -300,21 +317,10 @@ public class MetalQuintessenceParts
         {
             // Vector2 offset = new(41f, 48f);
             Vector2 offset = new(125f, 120f);
-            renderer.method_523(blossomBase, Vector2.Zero, offset, 0f);
-            renderer.method_529(blossomFlower, blossomBowl, Vector2.Zero);
-            HexIndex[] inputHex = new HexIndex[]
-            {
-                blossomA,
-                blossomB,
-                blossomC,
-                blossomD,
-                blossomE,
-                blossomF
+            // renderer.method_523(blossomBase, Vector2.Zero, offset, 0f);
+            // renderer.method_529(blossomFlower, blossomBowl, Vector2.Zero);
+            
 
-            };
-            foreach (HexIndex input in inputHex) {
-                renderer.method_529(blossomTransBowl, input, Vector2.Zero);
-            }
 
             renderer.method_529(blossomNumber, blossomF, Vector2.Zero);
 
@@ -325,6 +331,8 @@ public class MetalQuintessenceParts
             SolutionEditorBase seb = sim.field_3818;
             Dictionary<Part, PartSimState> pss = sim.field_3821;
             List<Part> parts = seb.method_502().field_3919;
+            
+            
             foreach (Part part in parts)
             {
                 PartType type = part.method_1159();
@@ -349,6 +357,7 @@ public class MetalQuintessenceParts
                             bool blocked = false; //
                             foreach (HexIndex h in outputHexes)
                             {
+                                
                                 if (sim.FindAtomRelative(part, h).method_1085())
                                 {
                                     blocked = true;
@@ -473,6 +482,7 @@ public class MetalQuintessenceParts
                     };
 
                     bool[] blocked = new bool[6];
+
                     for (int i = 0; i < 6; i++)
                     {
                         if (sim.FindAtomRelative(part, outputHexes[i]).method_1085())
@@ -483,8 +493,18 @@ public class MetalQuintessenceParts
                            blocked[i] = false;
                         }
                     }
+                    IEnumerable<Part> arms = sim.field_3818.method_502().field_3919.Where(p => p.method_1159().field_1533);
+                    foreach (Part arm in arms)
+                    {
+                        
+                        for (int i = 0; i < 6; i++)
+                            if (arm.method_1161() == part.method_1161() + outputHexes[i].Rotated(part.method_1163()))
+                            {
+                                blocked[i] = true;
+                            }
+                    }
 
-                    
+
                     if (sim.FindAtomRelative(part, blossomBowl).method_99(out AtomReference input) && blocked.Contains(false))
                     {
                         pss[part].field_2744 = new AtomType[1] { input.field_2280 };
@@ -526,11 +546,13 @@ public class MetalQuintessenceParts
                             SEB.field_3936.Add(new class_228(SEB, (enum_7)1, animationPosition, disposalFlashAnimation, 30f, Vector2.Zero, 0f));
 
 
-                            //joins the molecule and add bond
-                            Brimstone.API.JoinMoleculesAtHexes(sim, part, blossomBowl, blossomF);
+                            //joins the molecule and add bond 
                             for (int i = 0; i < 6; i++)
                             {
-                                if (!blocked[i]) Brimstone.API.AddBond(sim, part, blossomBowl, outputHexes[i], enum_126.Standard, true, false);
+                                // it's done here despite being inefficient to account for each part being blocked
+                                if (!blocked[i]) {
+                                    Brimstone.API.JoinMoleculesAtHexes(sim, part, blossomBowl, outputHexes[i]);
+                                    Brimstone.API.AddBond(sim, part, blossomBowl, outputHexes[i], enum_126.Standard, true, false); }
                             }
                         }
                     }
@@ -549,7 +571,124 @@ public class MetalQuintessenceParts
         FTSIGCTU.MirrorTool.addRule(Blossom, FTSIGCTU.MirrorTool.mirrorVanBerlo);
     }
 
+    public static void BlossomHandlingHook()
+    {
+        Logger.Log("[MetalQuintessence] Hooking for Blossom");
+        IL.Solution.method_1947 += IL_BlossomCheck;
+        IL.SolutionEditorBase.method_1984 += DispoDraw;
+        On.PartDraggingInputMode.method_1 += DispoDrawDragged;
+    }
 
+    //copied from True Animismus
+    private static void DispoDraw(ILContext il)
+    {
+        // The Disposal Jack has to be drawn on top of every other glyph.
+        // Normally the game draws each glyph in order, so I can't use QApi in the same way as with the rest of the custom glyphs
+        // So instead, I'm going into method_1984, the one responsible for drawing everything on the board
+        // And inserting 'draw the disposal jack' code right after the 'draw all the glyphs' code
+
+        var gremlin = new ILCursor(il);
+        gremlin.Goto(350); //somewhere shortly before the right place in the code
+
+
+        //Go to the right spot in the code; this is what the opcodes look like just before it
+        if (gremlin.TryGotoNext(MoveType.Before,
+        x => x.MatchLdarg(0),
+        x => x.MatchCallvirt(out _),
+        x => x.MatchLdarg(0),
+        x => x.MatchCallvirt(out _),
+        x => x.MatchCallvirt(out _),
+        x => x.MatchLdsfld(out _),
+        x => x.MatchDup(),
+        x => x.MatchBrtrue(out _),
+        x => x.MatchPop(),
+        x => x.MatchLdsfld(out _)
+            ))
+            //Gonna need the list of glyphs
+            gremlin.Emit(OpCodes.Ldloc_3);
+        //And SolutionEditorBase
+        gremlin.Emit(OpCodes.Ldarg_0);
+        //And also that first argument for method_1984--Vector2 param_5533
+        //I don't know what it does, but later methods want it 
+        gremlin.Emit(OpCodes.Ldarg_1);
+
+        //Use them to do this
+        //Logger.Log("gremlin.EmitDelegate<Action<Part[], SolutionEditorBase, Vector2>>((glyphlist, SEB, param_5533) => ");
+        gremlin.EmitDelegate<Action<Part[], SolutionEditorBase, Vector2>>((glyphlist, SEB, param_5533) =>
+        {
+            foreach (var dispojack in glyphlist.Where(x => x.method_1159() == Blossom))
+            {
+                //Roll our own rendering helper, the ones used in the usual QApi syntax
+                class_236 class_292 = SEB.method_1989(dispojack, param_5533);
+                class_195 renderer = new class_195(class_292.field_1984, class_292.field_1985, Editor.method_922());
+                renderer.method_529(blossomFlower, blossomBowl, Vector2.Zero);
+                foreach (HexIndex input in inputHex)
+                {
+                    renderer.method_529(blossomTransBowl, input, Vector2.Zero);
+                }
+            }
+        });
+    }
+    public static void DispoDrawDragged(On.PartDraggingInputMode.orig_method_1 orig, PartDraggingInputMode PDIM, SolutionEditorScreen SES)
+    {
+        //There are two ways that the game renders a glyph
+        //When it's on the board, it goes through SolutionEditorBase.method_1984 (we'll call SolutionEditorBase "SEB"), then through SEB.method_1993 and finally SEB.method_1996
+        //When it's being dragged around, it goes through PartDraggingInputMode.method_1, then to SEB.method_1993 and finally SEB.method_1996
+        //Changing the order of when the Disposal Jack needs to be drawn--last--has to be done in the outer methods, since those are the ones that know that more than one part exists
+        //So DispoDrawInner() has to be called here too, otherwise the Disposal Jack does not render while it's being dragged
+
+        //Nice of the princess to invite of over for a picnic, eh, Luigi?
+        //I hope she made lotsa spaghetti!
+        orig(PDIM, SES);
+
+        Type PDIMtype = typeof(PartDraggingInputMode);
+        FieldInfo reflected_field_2711 = PDIMtype.GetField("field_2711", BindingFlags.NonPublic | BindingFlags.Instance);
+        Vector2 vector = class_115.method_202() - (Vector2)reflected_field_2711.GetValue(PDIM);
+        FieldInfo reflected_field_2715 = PDIMtype.GetField("field_2715", BindingFlags.NonPublic | BindingFlags.Instance);
+        SES.field_4019 = class_187.field_1742.method_491((HexIndex)reflected_field_2715.GetValue(PDIM), vector);
+
+        var current_interface = SES.field_4010;
+        var interfaceDyn = new DynamicData(current_interface);
+        var draggedParts = interfaceDyn.Get<List<PartDraggingInputMode.DraggedPart>>("field_2712");
+        foreach (PartDraggingInputMode.DraggedPart draggedpart in draggedParts)
+        {   //All the parts being dragged
+            if (draggedpart.field_2722.method_1159() != Blossom) { continue; } //Just the disposal jacks
+
+            Part dispojack = draggedpart.field_2722;
+            class_236 class_292 = SES.method_1989(dispojack, vector);
+            class_195 renderer = new class_195(class_292.field_1984, class_292.field_1985, Editor.method_922());
+            renderer.method_529(blossomFlower, blossomBowl, Vector2.Zero);
+            foreach (HexIndex input in inputHex)
+            {
+                renderer.method_529(blossomTransBowl, input, Vector2.Zero);
+            }
+            //SolutionEditorScreen inherits from SolutionEditorBase, so you can apparently juse use a SES anywhere you would use a SEB
+            //You can tell I'm not formally educated in C# because that feels like it would lead to SO MUCH CONFUSION
+        }
+    }
+    // End of thing copied from animismus
+    public static void IL_BlossomCheck(ILContext il)
+    {
+
+        ILCursor cursor = new ILCursor(il);
+        if (cursor.TryGotoNext(MoveType.Before,
+            instr => instr.MatchBrfalse(out _)
+            ))
+            
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate(checkBlossom);
+            cursor.Emit(OpCodes.Ldloc_2);
+            cursor.EmitDelegate(checkBlossom);
+
+
+
+    }
+
+    public static bool checkBlossom(bool oldBool, Part part)
+    {
+        if (part.method_1159() == Blossom) return false;
+        else return oldBool;
+    }
 
 }
 

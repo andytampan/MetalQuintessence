@@ -35,6 +35,9 @@ public class MetalQuintessence : QuintessentialMod
 
         MetalQuintessenceAtoms.AddAtomTypes();
         MetalQuintessenceParts.AddPartsType();
+
+        MetalQuintessenceParts.BlossomHandlingHook();
+
         QApi.AddPuzzlePermission(PigmentationPermission, "Glyph of Pigmentation", "MetalQuintessence");
         QApi.AddPuzzlePermission(BlossomPermission, "Glyph of Blossom", "MetalQuintessence");
         QApi.AddPuzzlePermission(ChromeDispersionPermission, "Glyph of Chrome Dispersion", "MetalQuintessence");
