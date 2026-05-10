@@ -46,6 +46,9 @@ public class MetalQuintessenceParts
     public static Texture blossomIcon = Brimstone.API.GetTexture("textures/parts/andytampan/icons/blossom");
     public static Texture blossomIconHover = Brimstone.API.GetTexture("textures/parts/andytampan/icons/blossom_hover");
 
+    public static Texture singleGlossMask = Brimstone.API.GetTexture("textures/parts/andytampan/blossom/output_ring_gloss_mask");
+    public static Texture glossTexture = Brimstone.API.GetTexture("textures/parts/andytampan/blossom/output_gloss");
+
     public static Texture chromaticDispersionBase = Brimstone.API.GetTexture("textures/parts/andytampan/chromaticDispersionBase/pigmentationBase");
     public static Texture chromaticDispersionGlyphBase = Brimstone.API.GetTexture("textures/parts/andytampan/chromaticDispersionBase/glyphBase");
     public static Texture chromaticDispersionIcon = Brimstone.API.GetTexture("textures/parts/andytampan/icons/chromaDispersion");
@@ -96,6 +99,7 @@ public class MetalQuintessenceParts
 
     public static HexIndex[] inputHex = new HexIndex[]
         {
+                blossomBowl,
                 blossomA,
                 blossomB,
                 blossomC,
@@ -149,6 +153,7 @@ public class MetalQuintessenceParts
             {
                 pigmentationBowl,
                 pigmentationA,
+                pigmentationA,
                 pigmentationB,
                 pigmentationC,
                 pigmentationD,
@@ -171,6 +176,7 @@ public class MetalQuintessenceParts
             field_1547 = blossomIcon, // Panel icon
             field_1548 = blossomIconHover, // Hovered panel icon
             field_1540 = new HexIndex[]
+            
             {
                 blossomBowl,
                 blossomA,
@@ -316,13 +322,13 @@ public class MetalQuintessenceParts
         QApi.AddPartType(Blossom, static (part, pos, editor, renderer) =>
         {
             // Vector2 offset = new(41f, 48f);
-            Vector2 offset = new(125f, 120f);
+            
             // renderer.method_523(blossomBase, Vector2.Zero, offset, 0f);
             // renderer.method_529(blossomFlower, blossomBowl, Vector2.Zero);
             
 
 
-            renderer.method_529(blossomNumber, blossomF, Vector2.Zero);
+            // renderer.method_529(blossomNumber, blossomF, Vector2.Zero);
 
         });
         QApi.RunAfterCycle((sim, first)
@@ -563,6 +569,20 @@ public class MetalQuintessenceParts
 
         
     }
+
+    private static Vector2 hexGraphicalOffset(HexIndex hex) => MainClass.hexGraphicalOffset(hex);
+    private static void drawPartGloss(class_195 renderer, Texture gloss, Texture glossMask, Vector2 offset, HexIndex hexOffset, float angle)
+    {
+        class_135.method_257().field_1692 = class_238.field_1995.field_1757; // MaskedGlossPS shader
+        class_135.method_257().field_1693[1] = gloss;
+        var hex = new HexIndex(0, 0);
+        Vector2 method2001 = 0.0001f * (renderer.field_1797 + hexGraphicalOffset(hex).Rotated(renderer.field_1798) - 0.5f * class_115.field_1433);
+        class_135.method_257().field_1695 = method2001;
+        renderer.method_528(glossMask, hexOffset, Vector2.Zero);
+        class_135.method_257().field_1692 = class_135.method_257().field_1696; // previous shader
+        class_135.method_257().field_1693[1] = class_238.field_1989.field_71;
+        class_135.method_257().field_1695 = Vector2.Zero;
+    }
     public static void LoadMirrorRules()
     {
         
@@ -575,12 +595,13 @@ public class MetalQuintessenceParts
     {
         Logger.Log("[MetalQuintessence] Hooking for Blossom");
         IL.Solution.method_1947 += IL_BlossomCheck;
-        IL.SolutionEditorBase.method_1984 += DispoDraw;
-        On.PartDraggingInputMode.method_1 += DispoDrawDragged;
+        IL.SolutionEditorBase.method_1984 += BlossomDraw;
+        On.PartDraggingInputMode.method_1 += BlossomFrontDrawDragged;
     }
 
+
     //copied from True Animismus
-    private static void DispoDraw(ILContext il)
+    private static void BlossomDraw(ILContext il)
     {
         // The Disposal Jack has to be drawn on top of every other glyph.
         // Normally the game draws each glyph in order, so I can't use QApi in the same way as with the rest of the custom glyphs
@@ -588,9 +609,25 @@ public class MetalQuintessenceParts
         // And inserting 'draw the disposal jack' code right after the 'draw all the glyphs' code
 
         var gremlin = new ILCursor(il);
+        
+
+        if (gremlin.TryGotoNext(MoveType.Before, x => x.MatchStloc(26)))
+            gremlin.Emit(OpCodes.Ldloc_3);
+        gremlin.Emit(OpCodes.Ldarg_0);
+        gremlin.Emit(OpCodes.Ldarg_1);
+        gremlin.EmitDelegate<Action<Part[], SolutionEditorBase, Vector2>>((glyphlist, SEB, param_5533) =>
+        {
+            foreach (var dispojack in glyphlist.Where(x => x.method_1159() == Blossom))
+            {
+                //Roll our own rendering helper, the ones used in the usual QApi syntax
+                class_236 class_292 = SEB.method_1989(dispojack, param_5533);
+                class_195 renderer = new class_195(class_292.field_1984, class_292.field_1985, Editor.method_922());
+                // renderer.method_529(blossomFlower, blossomBowl, Vector2.Zero);
+                Vector2 offset = new(125f, 120f);
+                renderBackBlossom(renderer, offset);
+            }
+        });
         gremlin.Goto(350); //somewhere shortly before the right place in the code
-
-
         //Go to the right spot in the code; this is what the opcodes look like just before it
         if (gremlin.TryGotoNext(MoveType.Before,
         x => x.MatchLdarg(0),
@@ -621,15 +658,13 @@ public class MetalQuintessenceParts
                 //Roll our own rendering helper, the ones used in the usual QApi syntax
                 class_236 class_292 = SEB.method_1989(dispojack, param_5533);
                 class_195 renderer = new class_195(class_292.field_1984, class_292.field_1985, Editor.method_922());
-                renderer.method_529(blossomFlower, blossomBowl, Vector2.Zero);
-                foreach (HexIndex input in inputHex)
-                {
-                    renderer.method_529(blossomTransBowl, input, Vector2.Zero);
-                }
+                // renderer.method_529(blossomFlower, blossomBowl, Vector2.Zero);
+                Vector2 offset = new(125f, 120f);
+                renderFrontBlossom(renderer, offset);
             }
         });
     }
-    public static void DispoDrawDragged(On.PartDraggingInputMode.orig_method_1 orig, PartDraggingInputMode PDIM, SolutionEditorScreen SES)
+    public static void BlossomFrontDrawDragged(On.PartDraggingInputMode.orig_method_1 orig, PartDraggingInputMode PDIM, SolutionEditorScreen SES)
     {
         //There are two ways that the game renders a glyph
         //When it's on the board, it goes through SolutionEditorBase.method_1984 (we'll call SolutionEditorBase "SEB"), then through SEB.method_1993 and finally SEB.method_1996
@@ -657,16 +692,40 @@ public class MetalQuintessenceParts
             Part dispojack = draggedpart.field_2722;
             class_236 class_292 = SES.method_1989(dispojack, vector);
             class_195 renderer = new class_195(class_292.field_1984, class_292.field_1985, Editor.method_922());
-            renderer.method_529(blossomFlower, blossomBowl, Vector2.Zero);
-            foreach (HexIndex input in inputHex)
-            {
-                renderer.method_529(blossomTransBowl, input, Vector2.Zero);
-            }
+            Vector2 offset = new(125f, 120f);
+            renderBackBlossom(renderer, offset);
+            renderFrontBlossom(renderer, offset);
+            
+            
             //SolutionEditorScreen inherits from SolutionEditorBase, so you can apparently juse use a SES anywhere you would use a SEB
             //You can tell I'm not formally educated in C# because that feels like it would lead to SO MUCH CONFUSION
         }
     }
     // End of thing copied from animismus
+    public static void renderBackBlossom(class_195 renderer, Vector2 offset)
+    {
+        renderer.method_523(blossomBase, new(-1f, -1f), offset, 0f);
+        renderer.method_523(blossomFlower, new(-1f, -1f), offset, 0f);
+        foreach (HexIndex input in inputHex)
+        {
+            if (input == blossomBowl)
+            {
+                renderer.method_528(bowl, input, Vector2.Zero);
+            } else
+            {
+                renderer.method_528(ringedBowl, input, Vector2.Zero);
+            }
+        }
+    }
+    public static void renderFrontBlossom(class_195 renderer, Vector2 offset)
+    {
+        
+        foreach (HexIndex input in inputHex)
+        {
+            renderer.method_528(blossomTransBowl, input, Vector2.Zero);
+            drawPartGloss(renderer, glossTexture, singleGlossMask, Vector2.Zero, input, 0);
+        }
+    }
     public static void IL_BlossomCheck(ILContext il)
     {
 
