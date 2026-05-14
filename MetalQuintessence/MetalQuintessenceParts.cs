@@ -609,8 +609,7 @@ public class MetalQuintessenceParts
         // And inserting 'draw the disposal jack' code right after the 'draw all the glyphs' code
 
         var gremlin = new ILCursor(il);
-        
-
+        gremlin.TryGotoNext(MoveType.After, x => x.MatchStloc(26));
         if (gremlin.TryGotoNext(MoveType.Before, x => x.MatchStloc(26)))
             gremlin.Emit(OpCodes.Ldloc_3);
         gremlin.Emit(OpCodes.Ldarg_0);
@@ -627,6 +626,7 @@ public class MetalQuintessenceParts
                 renderBackBlossom(renderer, offset);
             }
         });
+
         gremlin.Goto(350); //somewhere shortly before the right place in the code
         //Go to the right spot in the code; this is what the opcodes look like just before it
         if (gremlin.TryGotoNext(MoveType.Before,
@@ -663,6 +663,7 @@ public class MetalQuintessenceParts
                 renderFrontBlossom(renderer, offset);
             }
         });
+
     }
     public static void BlossomFrontDrawDragged(On.PartDraggingInputMode.orig_method_1 orig, PartDraggingInputMode PDIM, SolutionEditorScreen SES)
     {
